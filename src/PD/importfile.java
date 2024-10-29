@@ -1,5 +1,4 @@
 package PD;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -12,24 +11,36 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import BLL.EditorBusinessLogic;
 import BLL.IEditorBusinessLogic;
 import DTO.Files;
+import DTO.Page;
 
 public class importfile extends JFrame {
     private IEditorBusinessLogic filesfrombusiness;
     private JTable table;
     private DefaultTableModel tableModel;
+    private JButton searchButton;
+    private JTextField searchTextField;
 
     public importfile(IEditorBusinessLogic filesfrombusiness) {
-    	this.filesfrombusiness=filesfrombusiness;
+        this.filesfrombusiness = filesfrombusiness;
         this.setSize(700, 700);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setTitle("Imported Files");
         this.setLayout(new BorderLayout());
 
+        // Create the search panel with button and text field
+        JPanel searchPanel = new JPanel(new FlowLayout());
+        searchButton = new JButton("Search");
+        searchTextField = new JTextField(20);
+        searchPanel.add(searchTextField);
+        searchPanel.add(searchButton);
+
+        // Table setup
         String[] columnNames = {"ID", "FileName"};
         List<Files> files = filesfrombusiness.getFiles();
         Object[][] data = new Object[files.size()][columnNames.length];
@@ -50,11 +61,13 @@ public class importfile extends JFrame {
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
+        // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton searchButton = new JButton("View Specific");
+        JButton viewSpecific = new JButton("View Specific");
         JButton updateButton = new JButton("Update");
         JButton deleteButton = new JButton("Delete");
 
+        // Mouse listener for the table
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (table.isEditing()) {
@@ -64,20 +77,21 @@ public class importfile extends JFrame {
                     int row = table.getSelectedRow();
                     int id = (int) tableModel.getValueAt(row, 0);
                     String content = filesfrombusiness.viewFile(id);
-                    new NewFile(content);
+                    new NewFile(filesfrombusiness,content);
                     importfile.this.dispose();
                 }
             }
         });
 
-        searchButton.addActionListener(new ActionListener() {
+        // Action listeners for buttons
+        viewSpecific.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String filename = JOptionPane.showInputDialog(null, "Enter filename:");
                 if (filename != null && !filename.trim().isEmpty()) {
                     Files file = filesfrombusiness.searchFilename(filename);
                     if (file != null) {
-                        new NewFile(file.getcontent());
+                        new NewFile(filesfrombusiness,file.getcontent());
                     } else {
                         JOptionPane.showMessageDialog(null, "File not found.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -117,15 +131,29 @@ public class importfile extends JFrame {
             }
         });
 
-        buttonPanel.add(searchButton);
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchTerm = searchTextField.getText();
+                List<Page> searchResults=filesfrombusiness.searchWordfromFiles(searchTerm);
+                new searchResults(searchResults,searchTerm,filesfrombusiness);
+            }
+        });
+
+        
+        buttonPanel.add(viewSpecific);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
-        this.add(scrollPane, BorderLayout.CENTER);
-        this.add(buttonPanel, BorderLayout.SOUTH);
+
+        
+        this.add(searchPanel, BorderLayout.NORTH); 
+        this.add(scrollPane, BorderLayout.CENTER); 
+        this.add(buttonPanel, BorderLayout.SOUTH); 
+
         this.setVisible(true);
     }
 
     public static void main(String[] args) {
-        //new importfile();
+        
     }
 }

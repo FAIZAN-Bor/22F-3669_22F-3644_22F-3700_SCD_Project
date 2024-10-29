@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import DTO.Files;
+import DTO.Page;
 
 public interface IEditorBusinessLogic {
 	List<Files> getFiles();
@@ -13,4 +14,5 @@ public interface IEditorBusinessLogic {
 	String viewFile(int id);
 	String readFile(File filename);
 	Files searchFilename(String filename);
+	List<Page> searchWordfromFiles(String word);
 }
