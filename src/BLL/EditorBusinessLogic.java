@@ -8,6 +8,7 @@ import java.util.List;
 import DAL.Editordata;
 import DAL.IEditordata;
 import DTO.Files;
+import DTO.Page;
 
 public class EditorBusinessLogic implements IEditorBusinessLogic{
 //    private Editordata data = new Editordata();
@@ -48,7 +49,10 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return content.toString();
     }
-
+    public List<Page> searchWordfromFiles(String word)
+    {
+    	return data.searchWordfromFiles(word);
+    }
     public Files searchFilename(String filename) {
         return data.searchFile(filename);
     }

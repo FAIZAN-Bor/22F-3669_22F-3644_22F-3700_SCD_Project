@@ -47,7 +47,8 @@ public class NewFile extends JFrame {
         this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public NewFile(String content) {
+    public NewFile(IEditorBusinessLogic files,String content) {
+    	this.files=files;
         this.setSize(700, 700);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setTitle("NewFile");

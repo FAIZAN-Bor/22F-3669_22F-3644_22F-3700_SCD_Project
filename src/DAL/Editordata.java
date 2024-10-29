@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import DTO.Files;
+import DTO.Page;
 
 public class Editordata implements IEditordata{
     private DataBaseConnection databaseConnection;
@@ -169,6 +170,28 @@ public class Editordata implements IEditordata{
             return null;
         }
     }
+    public List<Page> searchWordfromFiles(String word) {
+        List<Page> pageData = new ArrayList<>();
+        String searchQuery = "SELECT * FROM Page WHERE content LIKE ?";
+        
+        try (PreparedStatement pstmt = databaseConnection.getConnection().prepareStatement(searchQuery)) {
+            pstmt.setString(1, "%" + word + "%");
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                int pageId = rs.getInt("id");
+                int documentId = rs.getInt("document_id");
+                String content = rs.getString("content");
+                pageData.add(new Page(pageId, documentId, content));
+                
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pageData;
+    }
+
 
     public void closeConnection() {
         databaseConnection.closeConnection();

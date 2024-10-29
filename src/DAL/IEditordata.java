@@ -3,6 +3,7 @@ package DAL;
 import java.util.List;
 
 import DTO.Files;
+import DTO.Page;
 
 public interface IEditordata {
 	List<Files> getFiles();
@@ -13,4 +14,5 @@ public interface IEditordata {
 	boolean deleteFilename(int id);
 	String viewFilename(int id);
 	Files searchFile(String title);
+	List<Page> searchWordfromFiles(String word);
 }
