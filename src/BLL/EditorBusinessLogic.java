@@ -1,62 +1,55 @@
-package DAL;
+package BLL;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
+import DAL.Editordata;
+import DAL.IEditordata;
 import DTO.Files;
 
-public class Editordata {
-    private static final String URL = "jdbc:mysql://localhost:3306/arabiceditor";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
-    private Connection conn;
+public class EditorBusinessLogic implements IEditorBusinessLogic{
+//    private Editordata data = new Editordata();
+	private IEditordata data;
+	public EditorBusinessLogic(IEditordata data)
+	{
+		this.data=data;
+	}
+    public List<Files> getFiles() {
+        return data.getFiles();
+    }
 
-    public Editordata() {
-        try {
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public boolean saveToDB(String filename, String content) {
+        return data.saveToDB(filename, content);
     }
-      public boolean deleteFilename(int id) {
-        String query = "DELETE FROM editor WHERE id = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, id);
-            int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean updateFilename(int id, String newFilename) {
+        return data.updateFilename(id, newFilename);
     }
-    
-    public String viewFilename(int id)
-    {
-        String query = "SELECT content FROM editor WHERE id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("content");
+
+    public boolean deleteFile(int id) {
+        return data.deleteFilename(id);
+    }
+
+    public String viewFile(int id) {
+        return data.viewFilename(id);
+    }
+
+    public String readFile(File filename) {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                content.append(line).append(System.lineSeparator());
             }
-        } catch (SQLException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return content.toString();
     }
-    
-    public void closeConnection() {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+
+    public Files searchFilename(String filename) {
+        return data.searchFile(filename);
     }
 }
