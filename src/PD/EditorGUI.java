@@ -4,6 +4,9 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import BLL.EditorBusinessLogic;
+import BLL.IEditorBusinessLogic;
+import DAL.Editordata;
+
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,9 +16,10 @@ public class EditorGUI extends JFrame {
     private JButton create;
     private JButton importfile;
     private JButton importfromlocal;
-    private EditorBusinessLogic filesfrombusiness = new EditorBusinessLogic();
+    private IEditorBusinessLogic filesfrombusiness;
 
-    public EditorGUI() {
+    public EditorGUI(IEditorBusinessLogic filesfrombusiness) {
+    	this.filesfrombusiness=filesfrombusiness;
         create = new JButton("Create");
         importfile = new JButton("Import From DB");
         importfromlocal = new JButton("Import From Local PC");
@@ -23,7 +27,7 @@ public class EditorGUI extends JFrame {
         importfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new importfile();
+                new importfile(filesfrombusiness);
                 EditorGUI.this.dispose();
             }
         });
@@ -31,7 +35,7 @@ public class EditorGUI extends JFrame {
         create.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new NewFile();
+                new NewFile(filesfrombusiness);
                 EditorGUI.this.dispose();
             }
         });
@@ -61,6 +65,9 @@ public class EditorGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        new EditorGUI();
+    	Editordata data=new Editordata();
+    	EditorBusinessLogic obj=new EditorBusinessLogic(data);
+    	new EditorGUI(obj);
+        //new EditorGUI();
     }
 }

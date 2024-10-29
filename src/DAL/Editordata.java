@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import DTO.Files;
 
-public class Editordata {
+public class Editordata implements IEditordata{
     private DataBaseConnection databaseConnection;
 
     public Editordata() {
@@ -75,7 +75,7 @@ public class Editordata {
         }
     }
 
-    private String generateHash(String content) {
+    public String generateHash(String content) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(content.getBytes());
@@ -89,7 +89,7 @@ public class Editordata {
         }
     }
 
-    private List<String> splitContentIntoPages(String content, int wordsPerPage) {
+    public List<String> splitContentIntoPages(String content, int wordsPerPage) {
         String[] words = content.split("\\s+");
         List<String> pages = new ArrayList<>();
         StringBuilder pageContent = new StringBuilder();

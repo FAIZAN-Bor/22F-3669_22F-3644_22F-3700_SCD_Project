@@ -7,15 +7,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import BLL.EditorBusinessLogic;
+import BLL.IEditorBusinessLogic;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
 public class NewFile extends JFrame {
     private JTextArea textArea;
     private JButton saveButton;
-    private EditorBusinessLogic files = new EditorBusinessLogic();
+    private IEditorBusinessLogic files;
 
-    public NewFile() {
+    public NewFile(IEditorBusinessLogic files) {
+    	this.files=files;
         this.setSize(700, 700);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setTitle("NewFile");

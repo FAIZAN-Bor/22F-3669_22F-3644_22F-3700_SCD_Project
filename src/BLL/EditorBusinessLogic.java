@@ -6,11 +6,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import DAL.Editordata;
+import DAL.IEditordata;
 import DTO.Files;
 
-public class EditorBusinessLogic {
-    private Editordata data = new Editordata();
-
+public class EditorBusinessLogic implements IEditorBusinessLogic{
+//    private Editordata data = new Editordata();
+	private IEditordata data;
+	public EditorBusinessLogic(IEditordata data)
+	{
+		this.data=data;
+	}
     public List<Files> getFiles() {
         return data.getFiles();
     }

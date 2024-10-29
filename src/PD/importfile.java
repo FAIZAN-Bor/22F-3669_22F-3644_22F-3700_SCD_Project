@@ -15,14 +15,16 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import BLL.EditorBusinessLogic;
+import BLL.IEditorBusinessLogic;
 import DTO.Files;
 
 public class importfile extends JFrame {
-    private EditorBusinessLogic filesfrombusiness = new EditorBusinessLogic();
+    private IEditorBusinessLogic filesfrombusiness;
     private JTable table;
     private DefaultTableModel tableModel;
 
-    public importfile() {
+    public importfile(IEditorBusinessLogic filesfrombusiness) {
+    	this.filesfrombusiness=filesfrombusiness;
         this.setSize(700, 700);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setTitle("Imported Files");
@@ -49,7 +51,7 @@ public class importfile extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton searchButton = new JButton("Search");
+        JButton searchButton = new JButton("View Specific");
         JButton updateButton = new JButton("Update");
         JButton deleteButton = new JButton("Delete");
 
@@ -124,6 +126,6 @@ public class importfile extends JFrame {
     }
 
     public static void main(String[] args) {
-        new importfile();
+        //new importfile();
     }
 }
