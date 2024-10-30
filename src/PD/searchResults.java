@@ -23,7 +23,7 @@ public class searchResults extends JFrame {
 
         String[] columnNames = {"Page ID", "Document ID", "Search Results"};
 
-        // Create a non-editable table model
+        
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -35,13 +35,8 @@ public class searchResults extends JFrame {
             int pageId = page.getPageId();
             int documentId = page.getDocumentId();
             String contentLine = page.getSearchResult();
-            int index = contentLine.toLowerCase().indexOf(word.toLowerCase());
-            if (index != -1) {
-                int start = Math.max(0, index - 15);
-                int end = Math.min(contentLine.length(), index + word.length() + 15);
-                String snippet = contentLine.substring(start, end) + "...";
-                tableModel.addRow(new Object[]{pageId, documentId, snippet});
-            }
+            String snippet = filesfrombusiness.generateSnippet(contentLine, word);
+            tableModel.addRow(new Object[]{pageId, documentId, snippet});
         }
 
         resultsTable = new JTable(tableModel);

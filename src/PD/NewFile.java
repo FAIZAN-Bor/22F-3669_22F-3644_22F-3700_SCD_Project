@@ -34,8 +34,16 @@ public class NewFile extends JFrame {
         saveButton.addActionListener(e -> {
             String filename = JOptionPane.showInputDialog(this, "Enter filename:");
             if (filename != null && !filename.trim().isEmpty()) {
-                NewFile.this.files.saveToDB(filename, textArea.getText());
-                JOptionPane.showMessageDialog(this, "File saved with name: " + filename);
+                if(NewFile.this.files.saveToDB(filename, textArea.getText()))
+                {
+                	JOptionPane.showMessageDialog(this, "File saved with name: " + filename);
+                }
+                
+                else
+                {
+                	JOptionPane.showMessageDialog(this, "File Alrady Exists ");
+                }
+                	
             } else {
                 JOptionPane.showMessageDialog(this, "Filename cannot be empty.");
             }
@@ -65,8 +73,15 @@ public class NewFile extends JFrame {
         saveButton.addActionListener(e -> {
             String filename = JOptionPane.showInputDialog(this, "Enter filename:");
             if (filename != null && !filename.trim().isEmpty()) {
-                NewFile.this.files.saveToDB(filename, textArea.getText());
-                JOptionPane.showMessageDialog(this, "File saved with name: " + filename);
+            	if(NewFile.this.files.saveToDB(filename, textArea.getText()))
+                {
+                	JOptionPane.showMessageDialog(this, "File saved with name: " + filename);
+                }
+                
+                else
+                {
+                	JOptionPane.showMessageDialog(this, "File Alrady Exists ");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Filename cannot be empty.");
             }

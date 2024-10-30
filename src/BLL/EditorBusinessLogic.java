@@ -49,11 +49,20 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return content.toString();
     }
-    public List<Page> searchWordfromFiles(String word)
+    public List<Page> searchWordFromFiles(String word)
     {
     	return data.searchWordfromFiles(word);
     }
     public Files searchFilename(String filename) {
         return data.searchFile(filename);
+    }
+    public String generateSnippet(String contentLine, String word) {
+        int index = contentLine.toLowerCase().indexOf(word.toLowerCase());
+        if (index != -1) {
+            int start = Math.max(0, index - 15);
+            int end = Math.min(contentLine.length(), index + word.length() + 15);
+            return contentLine.substring(start, end) + "...";
+        }
+        return contentLine;  // Return the full content if word not found
     }
 }

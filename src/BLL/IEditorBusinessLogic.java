@@ -14,5 +14,6 @@ public interface IEditorBusinessLogic {
 	String viewFile(int id);
 	String readFile(File filename);
 	Files searchFilename(String filename);
-	List<Page> searchWordfromFiles(String word);
+	List<Page> searchWordFromFiles(String word);
+	String generateSnippet(String contentLine, String word);
 }
