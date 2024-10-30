@@ -1,3 +1,6 @@
 /DataBaseConnection.class
 /Editordata.class
 /IEditordata.class
+/DAOFactory.class
+/AbstractClassDAOfactory.class
+/SQLDAOEditor.class

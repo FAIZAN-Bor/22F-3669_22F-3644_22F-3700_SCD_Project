@@ -77,8 +77,6 @@ public class EditorGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        Editordata data = new Editordata();
-        EditorBusinessLogic obj = new EditorBusinessLogic(data);
-        new EditorGUI(obj);
+        
     }
 }
