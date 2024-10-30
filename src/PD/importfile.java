@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,7 +26,7 @@ public class importfile extends JFrame {
     private DefaultTableModel tableModel;
     private JButton searchButton;
     private JTextField searchTextField;
-
+    private JComboBox<String> searchComboBox;
     public importfile(IEditorBusinessLogic filesfrombusiness) {
         this.filesfrombusiness = filesfrombusiness;
         this.setSize(700, 700);
@@ -33,14 +34,15 @@ public class importfile extends JFrame {
         this.setTitle("Imported Files");
         this.setLayout(new BorderLayout());
 
-        // Create the search panel with button and text field
         JPanel searchPanel = new JPanel(new FlowLayout());
         searchButton = new JButton("Search");
         searchTextField = new JTextField(20);
+        String[] options = new String[]{"Search by Exact Word", "Search by Prefix/Postfix"};
+        searchComboBox =new JComboBox(options);
+        searchPanel.add(searchComboBox);
         searchPanel.add(searchTextField);
         searchPanel.add(searchButton);
-
-        // Table setup
+        
         String[] columnNames = {"ID", "FileName"};
         List<Files> files = filesfrombusiness.getFiles();
         Object[][] data = new Object[files.size()][columnNames.length];
@@ -61,13 +63,11 @@ public class importfile extends JFrame {
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton viewSpecific = new JButton("View Specific");
         JButton updateButton = new JButton("Update");
         JButton deleteButton = new JButton("Delete");
 
-        // Mouse listener for the table
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (table.isEditing()) {
@@ -83,7 +83,6 @@ public class importfile extends JFrame {
             }
         });
 
-        // Action listeners for buttons
         viewSpecific.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -135,8 +134,17 @@ public class importfile extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchTerm = searchTextField.getText();
-                List<Page> searchResults=filesfrombusiness.searchWordfromFiles(searchTerm);
-                new searchResults(searchResults,searchTerm,filesfrombusiness);
+                String selectedOption = (String) searchComboBox.getSelectedItem();
+                List<Page> searchResults=filesfrombusiness.searchWordFromFiles(searchTerm);
+                if(selectedOption.equals("Search by Exact Word"))
+                {
+                	searchTerm=" "+searchTerm+" ";
+                	new searchResults(searchResults,searchTerm,filesfrombusiness);
+                }
+                else
+                {
+                	new searchResults(searchResults,searchTerm,filesfrombusiness);
+                }
             }
         });
 

@@ -48,6 +48,7 @@ public class Editordata implements IEditordata{
             int count = rs.getInt(1);
 
             if (count > 0) {
+            	System.out.println("Already Exists");
                 return false; // Content already exists
             } else {
                 PreparedStatement insertDocumentPstmt = databaseConnection.getConnection().prepareStatement(insertDocumentQuery, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -196,4 +197,5 @@ public class Editordata implements IEditordata{
     public void closeConnection() {
         databaseConnection.closeConnection();
     }
+
 }
