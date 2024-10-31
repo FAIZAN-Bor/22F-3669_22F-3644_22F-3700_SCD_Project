@@ -65,4 +65,9 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return contentLine;  // Return the full content if word not found
     }
+	@Override
+	public String transliterate(String data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -16,4 +16,5 @@ public interface IEditorBusinessLogic {
 	Files searchFilename(String filename);
 	List<Page> searchWordFromFiles(String word);
 	String generateSnippet(String contentLine, String word);
+	String transliterate(String data);
 }
