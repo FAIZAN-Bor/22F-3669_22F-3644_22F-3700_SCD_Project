@@ -69,6 +69,19 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 	@Override
 	public String transliterate(String arabicText) {
 		// TODO Auto-generated method stub
-		return null;
+		
+
+		String rules = "\u0636 > d; "
+                + "\u0623 > a; "
+                + "\u0625 > i; "
+                + "\u0627 > a; "
+                + "\u0628 > b; "
+                + "\u062A > t; "
+                + "\u062B > th; "
+                + "\u062C > j; ";
+		
+		   Transliterator transliterator = Transliterator.createFromRules("ArabicToEnglish", rules, Transliterator.FORWARD);
+		   
+		   return transliterator.transliterate(arabicText);
 	}
 }
