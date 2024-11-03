@@ -1,16 +1,8 @@
 package PD;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import BLL.EditorBusinessLogic;
+import javax.swing.*;
+import java.awt.*;
 import BLL.IEditorBusinessLogic;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 public class NewFile extends JFrame {
     private JTextArea textArea;
@@ -18,78 +10,56 @@ public class NewFile extends JFrame {
     private IEditorBusinessLogic files;
 
     public NewFile(IEditorBusinessLogic files) {
-    	this.files=files;
-        this.setSize(700, 700);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setTitle("NewFile");
-        this.setLayout(new BorderLayout());
-        this.setVisible(true);
-
-        textArea = new JTextArea(20, 50);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-
-        saveButton = new JButton("Save");
-        saveButton.addActionListener(e -> {
-            String filename = JOptionPane.showInputDialog(this, "Enter filename:");
-            if (filename != null && !filename.trim().isEmpty()) {
-                if(NewFile.this.files.saveToDB(filename, textArea.getText()))
-                {
-                	JOptionPane.showMessageDialog(this, "File saved with name: " + filename);
-                }
-                
-                else
-                {
-                	JOptionPane.showMessageDialog(this, "File Alrady Exists ");
-                }
-                	
-            } else {
-                JOptionPane.showMessageDialog(this, "Filename cannot be empty.");
-            }
-        });
-
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(saveButton);
-        this.add(scrollPane, BorderLayout.CENTER);
-        this.add(buttonPanel, BorderLayout.SOUTH);
+        this(files, ""); // Use empty content for a new file.
     }
 
-    public NewFile(IEditorBusinessLogic files,String content) {
-    	this.files=files;
-        this.setSize(700, 700);
+    public NewFile(IEditorBusinessLogic files, String content) {
+        this.files = files;
+        this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setTitle("NewFile");
-        this.setLayout(new BorderLayout());
-        this.setVisible(true);
+        this.setTitle("New File Editor");
+        this.setLayout(new BorderLayout(10, 10));
 
+        // Text Area Setup
         textArea = new JTextArea(20, 50);
+        textArea.setText(content.replaceAll("\r\n", "\n"));
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        textArea.setText(content.replaceAll("\r\n", "\n")); // Ensure new lines are correctly interpreted
+        textArea.setFont(new Font("Arial", Font.PLAIN, 16));
         JScrollPane scrollPane = new JScrollPane(textArea);
-
+        
+        // Save Button
         saveButton = new JButton("Save");
-        saveButton.addActionListener(e -> {
-            String filename = JOptionPane.showInputDialog(this, "Enter filename:");
-            if (filename != null && !filename.trim().isEmpty()) {
-            	if(NewFile.this.files.saveToDB(filename, textArea.getText()))
-                {
-                	JOptionPane.showMessageDialog(this, "File saved with name: " + filename);
-                }
-                
-                else
-                {
-                	JOptionPane.showMessageDialog(this, "File Alrady Exists ");
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Filename cannot be empty.");
-            }
-        });
+        styleButton(saveButton);
+        saveButton.addActionListener(e -> saveFile());
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        // Button Panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        buttonPanel.setBackground(new Color(230, 240, 250));
         buttonPanel.add(saveButton);
+
+        // Add components to Frame
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
+        this.setVisible(true); // Ensure components are initialized before visibility
+    }
+
+    private void saveFile() {
+        String filename = JOptionPane.showInputDialog(this, "Enter filename:");
+        if (filename != null && !filename.trim().isEmpty()) {
+            boolean isSaved = files.saveToDB(filename, textArea.getText());
+            String message = isSaved ? "File saved with name: " + filename : "File already exists";
+            JOptionPane.showMessageDialog(this, message, isSaved ? "Success" : "Error", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Filename cannot be empty.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Arial", Font.PLAIN, 14));
+        button.setBackground(new Color(60, 179, 113));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
     }
 }

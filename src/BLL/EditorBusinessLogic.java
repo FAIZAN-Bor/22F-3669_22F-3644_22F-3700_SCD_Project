@@ -1,4 +1,5 @@
 package BLL;
+import com.ibm.icu.text.Transliterator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,7 +67,7 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         return contentLine;  // Return the full content if word not found
     }
 	@Override
-	public String transliterate(String data) {
+	public String transliterate(String arabicText) {
 		// TODO Auto-generated method stub
 		return null;
 	}

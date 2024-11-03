@@ -1,36 +1,31 @@
 package PD;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JFileChooser;
-import BLL.EditorBusinessLogic;
-import BLL.IEditorBusinessLogic;
-import DAL.Editordata;
-
-import java.awt.FlowLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import BLL.IEditorBusinessLogic;
 
 public class EditorGUI extends JFrame {
     private JButton create;
     private JButton importfile;
     private JButton importfromlocal;
-
     private IEditorBusinessLogic filesfrombusiness;
 
     public EditorGUI(IEditorBusinessLogic filesfrombusiness) {
         this.filesfrombusiness = filesfrombusiness;
 
-        create = new JButton("Create");
-        importfile = new JButton("Import From DB");
-        importfromlocal = new JButton("Import From Local PC");
-        
+        create = new JButton("Create New File");
+        importfile = new JButton("Import from Database");
+        importfromlocal = new JButton("Import from Local PC");
 
+        // Setting up button styles
+        styleButton(create);
+        styleButton(importfile);
+        styleButton(importfromlocal);
+
+        // Action listeners for buttons
         importfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -56,27 +51,51 @@ public class EditorGUI extends JFrame {
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     String content = filesfrombusiness.readFile(selectedFile);
-                    new NewFile(filesfrombusiness,content);
+                    content = content.trim();
+
+                    String trans_cont = filesfrombusiness.transliterate(content);
+                    new NewFile(filesfrombusiness, trans_cont);
                 }
             }
         });
 
-        
+        // Setting up the main panel
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(240, 248, 255));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        // Title label
+        JLabel titleLabel = new JLabel("G8 Arabic Editor", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(0, 102, 204));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Button panel
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        buttonPanel.setBackground(new Color(240, 248, 255));
+        buttonPanel.add(create);
+        buttonPanel.add(importfile);
+        buttonPanel.add(importfromlocal);
+        
+        // Center button panel
+        mainPanel.add(buttonPanel, BorderLayout.CENTER);
+        this.add(mainPanel);
+
+        // JFrame settings
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(700, 700);
-        this.setLayout(new FlowLayout());
+        this.setSize(400, 300);
+        this.setLocationRelativeTo(null);
         this.setTitle("Arabic Editor");
-        
-       
-        this.add(create);
-        this.add(importfile);
-        this.add(importfromlocal);
-        
         this.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Arial", Font.PLAIN, 16));
+        button.setBackground(new Color(0, 153, 204));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
     }
+
+    
 }
