@@ -1,21 +1,31 @@
 package BLL;
 import com.ibm.icu.text.Transliterator;
+import com.qcri.farasa.segmenter.Farasa;
+
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import DAL.Editordata;
 import DAL.IEditordata;
 import DTO.Files;
 import DTO.Page;
+import net.oujda_nlp_team.AlKhalil2Analyzer;
+import net.oujda_nlp_team.entity.Result;
 
 public class EditorBusinessLogic implements IEditorBusinessLogic{
 //    private Editordata data = new Editordata();
 	private IEditordata data;
-	public EditorBusinessLogic(IEditordata data)
+	private Farasa farasaSegmenter;
+	public EditorBusinessLogic(IEditordata data) throws FileNotFoundException, ClassNotFoundException, IOException
 	{
+		this.farasaSegmenter=new Farasa();
 		this.data=data;
 	}
     public List<Files> getFiles() {
@@ -50,15 +60,15 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return content.toString();
     }
-    public List<Page> searchWordFromFiles(String word)
+    public List<Page> searchWordFromFiles(String word,String option)
     {
-    	return data.searchWordfromFiles(word);
+    	return data.searchWordfromFiles(word,option);
     }
     public Files searchFilename(String filename) {
         return data.searchFile(filename);
     }
     public String generateSnippet(String contentLine, String word) {
-        int index = contentLine.toLowerCase().indexOf(word.toLowerCase());
+        int index = contentLine.indexOf(word);
         if (index != -1) {
             int start = Math.max(0, index - 15);
             int end = Math.min(contentLine.length(), index + word.length() + 15);
@@ -66,6 +76,71 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return contentLine;  // Return the full content if word not found
     }
+    @Override
+    public List<String> segmentArabicText(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            throw new IllegalArgumentException("Input text cannot be null or empty.");
+        }
+
+        try {
+            String cleanedText = text.replaceAll("[^\\p{IsArabic}\\s]", "").trim();
+
+            List<String> segmentedWords = farasaSegmenter.segmentLine(cleanedText);
+
+            return segmentedWords.stream()
+                                 .filter(word -> word != null && !word.trim().isEmpty())
+                                 .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error during Farasa segmentation", e);
+        }
+    }
+
+    @Override
+    public List<String> segmentWords(String filecontent, String selectedText) {
+        String textToSegment;
+        if (selectedText != null && !selectedText.trim().isEmpty()) {
+            textToSegment = selectedText;
+        } else {
+        	textToSegment=filecontent;
+        }
+        return segmentArabicText(textToSegment);
+    }
+    
+    @Override
+    public List<String[]> tagWordsWithPOS(List<String> words) {
+        List<String[]> wordDetails = new ArrayList<>();
+        AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
+
+        for (String word : words) {
+            try {
+                List<Result> results = analyzer.processToken(word).getAllResults();
+                String posTags = results.isEmpty() ? "Unknown" : String.join(", ", results.get(0).getPartOfSpeech().split("\\|"));
+
+                wordDetails.add(new String[]{word, posTags});
+            } catch (Exception e) {
+                wordDetails.add(new String[]{word, "Error"});
+            }
+        }
+
+        return wordDetails;
+    }
+    public ArrayList<String> navigatepages(int name) {
+		// TODO Auto-generated method stub
+		ArrayList<Page>pages=new ArrayList<>();
+		pages=data.navigatefromdb(name);
+		ArrayList<String> result = new ArrayList<>();
+		
+		if (pages.isEmpty()) {
+			return null;
+		}
+		else {
+			for(Page f: pages){
+				result.add(f.getSearchResult());
+			}
+			
+		}
+		return result;
+	}
 	@Override
 	public String transliterate(String arabicText) {
 		// TODO Auto-generated method stub

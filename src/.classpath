@@ -8,5 +8,10 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="lib" path="D:/Softwares/mysql-connector-j-9.0.0/mysql-connector-j-9.0.0/mysql-connector-j-9.0.0.jar"/>
 	<classpathentry kind="lib" path="D:/BSSE Notes/5th semester/SCD/Project/faizan.jar"/>
+	<classpathentry kind="lib" path="D:/Softwares/jars/AlKhalilMorphoSys2.jar"/>
+	<classpathentry kind="lib" path="D:/Softwares/jars/commonmark-0.17.0.jar"/>
+	<classpathentry kind="lib" path="D:/Softwares/jars/FarasaSegmenterJar.jar"/>
+	<classpathentry kind="lib" path="D:/Softwares/jars/icu4j-73.2.jar"/>
+	<classpathentry kind="lib" path="D:/Softwares/jars/jsoup-1.18.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

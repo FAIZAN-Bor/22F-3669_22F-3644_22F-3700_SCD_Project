@@ -171,20 +171,67 @@ public class Editordata implements IEditordata{
             return null;
         }
     }
-    public List<Page> searchWordfromFiles(String word) {
+    public List<Page> searchWordfromFiles(String word, String selectedOption) {
         List<Page> pageData = new ArrayList<>();
-        String searchQuery = "SELECT * FROM Page WHERE content LIKE ?";
+        
+        if ("Search by Exact Word".equals(selectedOption)) {
+            // Exact match query with punctuation handling
+            String searchQuery = "SELECT DISTINCT * FROM Page WHERE " +
+                    "content LIKE ? OR content LIKE ? OR content LIKE ? OR content LIKE ? OR content LIKE ?";
+
+            try (PreparedStatement pstmt = databaseConnection.getConnection().prepareStatement(searchQuery)) {
+                // Patterns for matching exact words
+                pstmt.setString(1, "% " + word + " %");  // Space before and after
+                pstmt.setString(2, word + " %");         // At the beginning of the string
+                pstmt.setString(3, "% " + word);         // At the end of the string
+                pstmt.setString(4, "% " + word + "[.,!?؟،]%"); // Word with punctuation after
+                pstmt.setString(5, "[.,!?؟،]%" + word + " %"); // Word with punctuation before
+                
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    int pageId = rs.getInt("id");
+                    int documentId = rs.getInt("document_id");
+                    String content = rs.getString("content");
+                    pageData.add(new Page(pageId, documentId, content));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Prefix/Postfix or general search
+            String searchQuery = "SELECT DISTINCT * FROM Page WHERE content LIKE ?";
+            
+            try (PreparedStatement pstmt = databaseConnection.getConnection().prepareStatement(searchQuery)) {
+                pstmt.setString(1, "%" + word + "%");
+                ResultSet rs = pstmt.executeQuery();
+                
+                while (rs.next()) {
+                    int pageId = rs.getInt("id");
+                    int documentId = rs.getInt("document_id");
+                    String content = rs.getString("content");
+                    pageData.add(new Page(pageId, documentId, content));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return pageData;
+    }
+    public ArrayList<Page> navigatefromdb(int id) {
+        ArrayList<Page> pageData = new ArrayList<>();
+        String searchQuery = "SELECT * FROM Page WHERE document_id = ?";
         
         try (PreparedStatement pstmt = databaseConnection.getConnection().prepareStatement(searchQuery)) {
-            pstmt.setString(1, "%" + word + "%");
+            pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
             
             while (rs.next()) {
-                int pageId = rs.getInt("id");
+                int pageId = rs.getInt("id"); // Assuming 'id' is the primary key in the Page table
                 int documentId = rs.getInt("document_id");
                 String content = rs.getString("content");
                 pageData.add(new Page(pageId, documentId, content));
-                
             }
         } catch (SQLException e) {
             e.printStackTrace();

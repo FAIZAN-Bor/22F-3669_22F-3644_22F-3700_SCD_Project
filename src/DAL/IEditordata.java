@@ -1,5 +1,6 @@
 package DAL;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import DTO.Files;
@@ -14,5 +15,6 @@ public interface IEditordata {
 	boolean deleteFilename(int id);
 	String viewFilename(int id);
 	Files searchFile(String title);
-	List<Page> searchWordfromFiles(String word);
+	List<Page> searchWordfromFiles(String word, String option);
+	ArrayList<Page> navigatefromdb(int id);
 }

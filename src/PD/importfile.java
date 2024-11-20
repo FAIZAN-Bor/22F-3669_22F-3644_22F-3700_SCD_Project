@@ -87,9 +87,9 @@ public class importfile extends JFrame {
                     content = content.trim();
 
                     String trans_cont = filesfrombusiness.transliterate(content);
-                    new NewFile(filesfrombusiness, trans_cont);
-                    
-                    new NewFile(filesfrombusiness, trans_cont);
+                    //new NewFile(filesfrombusiness, trans_cont);
+                    new selectOption(filesfrombusiness,trans_cont,content);
+               
                     importfile.this.dispose();
                 }
             }
@@ -152,16 +152,13 @@ public class importfile extends JFrame {
                 }
                 
                 String selectedOption = (String) searchComboBox.getSelectedItem();
-                List<Page> searchResults = filesfrombusiness.searchWordFromFiles(searchTerm);
+                List<Page> searchResults = filesfrombusiness.searchWordFromFiles(searchTerm,selectedOption);
 
                 if (searchResults.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "No data found for the search term: " + searchTerm, "No Results Found", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
 
-                if (selectedOption.equals("Search by Exact Word")) {
-                    searchTerm = " " + searchTerm + " ";
-                }
 
                 new searchResults(searchResults, searchTerm, filesfrombusiness);
             }

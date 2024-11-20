@@ -2,13 +2,18 @@ package PD;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import BLL.IEditorBusinessLogic;
 
 public class NewFile extends JFrame {
     private JTextArea textArea;
     private JButton saveButton;
     private IEditorBusinessLogic files;
-
+    private JButton word_segment;
     public NewFile(IEditorBusinessLogic files) {
         this(files, ""); // Use empty content for a new file.
     }
@@ -30,14 +35,35 @@ public class NewFile extends JFrame {
         
         // Save Button
         saveButton = new JButton("Save");
+        word_segment=new JButton("Word Segmentation");
         styleButton(saveButton);
+        styleButton(word_segment);
         saveButton.addActionListener(e -> saveFile());
-
+        
+        
+        
+        word_segment.addActionListener(new ActionListener()
+		{
+        	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String selectedText=textArea.getSelectedText();
+				List<String> SegmentedWords=new ArrayList<>();
+				SegmentedWords=files.segmentWords(content, selectedText);
+				List<String[]> wordswithPOS=new ArrayList<>();
+				wordswithPOS=files.tagWordsWithPOS(SegmentedWords);
+				new WordPOS(wordswithPOS);
+				
+				//new NewFile(filesfrombusiness, arabic);
+			}
+	
+		});
         // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setBackground(new Color(230, 240, 250));
         buttonPanel.add(saveButton);
-
+        buttonPanel.add(word_segment);
         // Add components to Frame
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);

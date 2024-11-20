@@ -1,6 +1,7 @@
 package BLL;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import DTO.Files;
@@ -14,7 +15,11 @@ public interface IEditorBusinessLogic {
 	String viewFile(int id);
 	String readFile(File filename);
 	Files searchFilename(String filename);
-	List<Page> searchWordFromFiles(String word);
+	List<Page> searchWordFromFiles(String word, String selectedOption);
 	String generateSnippet(String contentLine, String word);
 	String transliterate(String data);
+	ArrayList<String> navigatepages(int name);
+	List<String> segmentArabicText(String text);
+	List<String> segmentWords(String filecontent, String selectedText);
+	List<String[]> tagWordsWithPOS(List<String> words);
 }
