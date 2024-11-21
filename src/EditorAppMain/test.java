@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.tartarus.snowball.ext.arabicStemmer;
 
 public class test {
+<<<<<<< HEAD
 	public static List<String> splitArabicDocumentsIntoWords(String document) {
         if (document == null || document.trim().isEmpty()) {
             throw new IllegalArgumentException("The document cannot be null or empty.");
@@ -34,6 +35,10 @@ public class test {
         System.out.println(result);
         s=splitArabicDocumentsIntoWords(result);
         System.out.println(s);
+=======
+
+    public static void main(String[] args) {
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
         
     }
 }

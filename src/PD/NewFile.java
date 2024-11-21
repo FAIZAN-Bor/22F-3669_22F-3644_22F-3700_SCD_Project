@@ -66,7 +66,15 @@ public class NewFile extends JFrame {
         	String selectedText = textArea.getSelectedText();
             List<String> segmentedWords = files.userSelectedorFilecontent(content, selectedText);
             List<String[]> wordsWithPOS = files.tagWordsWithPOS(segmentedWords);
+<<<<<<< HEAD
             new WordPOS(wordsWithPOS,"الكلمة", "جزء من الكلام"); // Assuming WordPOS is a JFrame or a dialog to display results
+=======
+<<<<<<< HEAD
+            new WordPOS(wordsWithPOS,"الكلمة", "جزء من الكلام"); // Assuming WordPOS is a JFrame or a dialog to display results
+=======
+            new WordPOS(wordsWithPOS); // Assuming WordPOS is a JFrame or a dialog to display results
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
         });
         fileMenu.add(wordSegmentMenuItem);
         JMenuItem Stemming=new JMenuItem("Stemming");
@@ -74,6 +82,10 @@ public class NewFile extends JFrame {
         	String selectedText = textArea.getSelectedText();
             List<String> segmentedWords = files.userSelectedorFilecontent(content, selectedText);
             List<String[]> StemedWords = files.generateStemming(segmentedWords);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
             new WordPOS(StemedWords,"الكلمة","جذر"); // Assuming WordPOS is a JFrame or a dialog to display results
         });
         // Add File Menu to Menu Bar
@@ -87,6 +99,7 @@ public class NewFile extends JFrame {
         });
         // Add File Menu to Menu Bar
         fileMenu.add(lema);
+<<<<<<< HEAD
         JMenuItem TFIDF=new JMenuItem("TF-IDF");
         TFIDF.addActionListener(e -> {
         	String selectedText = textArea.getSelectedText();
@@ -135,6 +148,14 @@ public class NewFile extends JFrame {
         });
         // Add File Menu to Menu Bar
         fileMenu.add(PMI);
+=======
+=======
+            new WordPOS(StemedWords); // Assuming WordPOS is a JFrame or a dialog to display results
+        });
+        // Add File Menu to Menu Bar
+        fileMenu.add(Stemming);
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
         menuBar.add(fileMenu);
 
         // Set the Menu Bar to the Frame

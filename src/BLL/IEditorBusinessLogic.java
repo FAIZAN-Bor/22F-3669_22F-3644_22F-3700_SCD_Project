@@ -24,6 +24,7 @@ public interface IEditorBusinessLogic {
 	List<String> userSelectedorFilecontent(String filecontent, String selectedText);
 	List<String[]> tagWordsWithPOS(List<String> words);
 	List<String[]> generateStemming(List<String> words);
+<<<<<<< HEAD
 	List<String[]> lemmatizeWords(List<String> words);
 	Map<String, Double> calculateTF(List<String> documentWords, List<String> selectedWords);
 	Map<String, Double> calculateIDF(List<String> documents, List<String> selectedWords);
@@ -35,4 +36,10 @@ public interface IEditorBusinessLogic {
 	List<String[]> calculatePMI(List<String> segmentedWords);
 	
 	
+=======
+<<<<<<< HEAD
+	List<String[]> lemmatizeWords(List<String> words);
+=======
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
 }

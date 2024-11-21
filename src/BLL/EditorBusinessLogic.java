@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+=======
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
 import java.util.stream.Collectors;
 
 import org.tartarus.snowball.ext.arabicStemmer;
@@ -183,6 +189,7 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 
         return stemmedWords;
     }
+<<<<<<< HEAD
     public Map<String, Double> calculateTF(List<String> documentWords, List<String> selectedWords) {
         if (documentWords == null || selectedWords == null) {
             throw new IllegalArgumentException("Input lists cannot be null.");
@@ -328,6 +335,9 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
     }
 
     @Override
+=======
+<<<<<<< HEAD
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
     public List<String[]> lemmatizeWords(List<String> words) {
         List<String[]> lemmatizedWords = new ArrayList<>();
         AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
@@ -342,6 +352,12 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return lemmatizedWords;
     }
+<<<<<<< HEAD
+=======
+=======
+
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
+>>>>>>> ee5c280b6e9fa4462b5e5e1ada6c5262bfd740de
 
     @Override
     public ArrayList<String> navigatepages(int name) {
