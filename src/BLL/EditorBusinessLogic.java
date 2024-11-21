@@ -152,6 +152,7 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 
         return stemmedWords;
     }
+<<<<<<< HEAD
     public List<String[]> lemmatizeWords(List<String> words) {
         List<String[]> lemmatizedWords = new ArrayList<>();
         AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
@@ -166,6 +167,9 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return lemmatizedWords;
     }
+=======
+
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
 
     @Override
     public ArrayList<String> navigatepages(int name) {

@@ -64,7 +64,11 @@ public class NewFile extends JFrame {
         	String selectedText = textArea.getSelectedText();
             List<String> segmentedWords = files.userSelectedorFilecontent(content, selectedText);
             List<String[]> wordsWithPOS = files.tagWordsWithPOS(segmentedWords);
+<<<<<<< HEAD
             new WordPOS(wordsWithPOS,"الكلمة", "جزء من الكلام"); // Assuming WordPOS is a JFrame or a dialog to display results
+=======
+            new WordPOS(wordsWithPOS); // Assuming WordPOS is a JFrame or a dialog to display results
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
         });
         fileMenu.add(wordSegmentMenuItem);
         JMenuItem Stemming=new JMenuItem("Stemming");
@@ -72,6 +76,7 @@ public class NewFile extends JFrame {
         	String selectedText = textArea.getSelectedText();
             List<String> segmentedWords = files.userSelectedorFilecontent(content, selectedText);
             List<String[]> StemedWords = files.generateStemming(segmentedWords);
+<<<<<<< HEAD
             new WordPOS(StemedWords,"الكلمة","جذر"); // Assuming WordPOS is a JFrame or a dialog to display results
         });
         // Add File Menu to Menu Bar
@@ -85,6 +90,12 @@ public class NewFile extends JFrame {
         });
         // Add File Menu to Menu Bar
         fileMenu.add(lema);
+=======
+            new WordPOS(StemedWords); // Assuming WordPOS is a JFrame or a dialog to display results
+        });
+        // Add File Menu to Menu Bar
+        fileMenu.add(Stemming);
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
         menuBar.add(fileMenu);
 
         // Set the Menu Bar to the Frame

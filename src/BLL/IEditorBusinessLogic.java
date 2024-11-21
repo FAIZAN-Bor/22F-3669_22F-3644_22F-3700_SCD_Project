@@ -23,5 +23,8 @@ public interface IEditorBusinessLogic {
 	List<String> userSelectedorFilecontent(String filecontent, String selectedText);
 	List<String[]> tagWordsWithPOS(List<String> words);
 	List<String[]> generateStemming(List<String> words);
+<<<<<<< HEAD
 	List<String[]> lemmatizeWords(List<String> words);
+=======
+>>>>>>> 8a106d5f0b94c5f9bee90172bcfce7741e348541
 }
