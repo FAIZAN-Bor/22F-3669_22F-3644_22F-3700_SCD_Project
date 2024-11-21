@@ -19,7 +19,9 @@ public interface IEditorBusinessLogic {
 	String generateSnippet(String contentLine, String word);
 	String transliterate(String data);
 	ArrayList<String> navigatepages(int name);
-	List<String> segmentArabicText(String text);
-	List<String> segmentWords(String filecontent, String selectedText);
+	List<String> ArabictoMorphemes(String text);
+	List<String> userSelectedorFilecontent(String filecontent, String selectedText);
 	List<String[]> tagWordsWithPOS(List<String> words);
+	List<String[]> generateStemming(List<String> words);
+	List<String[]> lemmatizeWords(List<String> words);
 }

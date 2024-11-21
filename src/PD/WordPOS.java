@@ -7,7 +7,7 @@ import java.util.List;
 
 public class WordPOS extends JFrame {
 
-    public WordPOS(List<String[]> wordDetails) {
+    public WordPOS(List<String[]> wordDetails,String firstcolumn,String secondColumn) {
         // Set frame properties
         this.setTitle("تحليل الكلمات");
         this.setSize(600, 400);
@@ -15,7 +15,7 @@ public class WordPOS extends JFrame {
         this.setLocationRelativeTo(null);
 
         // Table column names in Arabic
-        String[] columnNames = {"الكلمة", "جزء من الكلام"};
+        String[] columnNames = {firstcolumn, secondColumn};
 
         // Convert List<String[]> to 2D Object array for JTable
         Object[][] tableData = new Object[wordDetails.size()][2];

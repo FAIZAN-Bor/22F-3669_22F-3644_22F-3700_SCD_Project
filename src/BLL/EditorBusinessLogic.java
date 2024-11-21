@@ -9,8 +9,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.tartarus.snowball.ext.arabicStemmer;
 
 import DAL.Editordata;
 import DAL.IEditordata;
@@ -23,6 +27,7 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 //    private Editordata data = new Editordata();
 	private IEditordata data;
 	private Farasa farasaSegmenter;
+	
 	public EditorBusinessLogic(IEditordata data) throws FileNotFoundException, ClassNotFoundException, IOException
 	{
 		this.farasaSegmenter=new Farasa();
@@ -77,7 +82,7 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         return contentLine;  // Return the full content if word not found
     }
     @Override
-    public List<String> segmentArabicText(String text) {
+    public List<String> ArabictoMorphemes(String text) {
         if (text == null || text.trim().isEmpty()) {
             throw new IllegalArgumentException("Input text cannot be null or empty.");
         }
@@ -96,14 +101,14 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
     }
 
     @Override
-    public List<String> segmentWords(String filecontent, String selectedText) {
+    public List<String> userSelectedorFilecontent(String filecontent, String selectedText) {
         String textToSegment;
         if (selectedText != null && !selectedText.trim().isEmpty()) {
             textToSegment = selectedText;
         } else {
         	textToSegment=filecontent;
         }
-        return segmentArabicText(textToSegment);
+        return ArabictoMorphemes(textToSegment);
     }
     
     @Override
@@ -124,6 +129,45 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 
         return wordDetails;
     }
+    @Override
+    public List<String[]> generateStemming(List<String> words) {
+        if (words == null || words.isEmpty()) {
+            throw new IllegalArgumentException("The input list of words cannot be null or empty.");
+        }
+
+        // Create an instance of the Arabic stemmer
+        arabicStemmer stemmer = new arabicStemmer();
+
+        // List to store the original word and its stemmed version
+        List<String[]> stemmedWords = new ArrayList<>();
+
+        // Stem each word in the list
+        for (String word : words) {
+            if (word != null && !word.trim().isEmpty()) {
+                stemmer.setCurrent(word); // Set the current word to the stemmer
+                String stemmedWord = stemmer.stem() ? stemmer.getCurrent() : word; // Stem or retain original
+                stemmedWords.add(new String[]{word, stemmedWord}); // Add both original and stemmed word
+            }
+        }
+
+        return stemmedWords;
+    }
+    public List<String[]> lemmatizeWords(List<String> words) {
+        List<String[]> lemmatizedWords = new ArrayList<>();
+        AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
+        for (String word : words) {
+            try {
+                List<Result> results = analyzer.processToken(word).getAllResults();
+                String lemma = results.isEmpty() ? "Unknown" : results.get(0).getLemma();
+                lemmatizedWords.add(new String[]{word, lemma});
+            } catch (Exception e) {
+                lemmatizedWords.add(new String[]{word, "Error"});
+            }
+        }
+        return lemmatizedWords;
+    }
+
+    @Override
     public ArrayList<String> navigatepages(int name) {
 		// TODO Auto-generated method stub
 		ArrayList<Page>pages=new ArrayList<>();
