@@ -17,4 +17,5 @@ public interface IEditordata {
 	Files searchFile(String title);
 	List<Page> searchWordfromFiles(String word, String option);
 	ArrayList<Page> navigatefromdb(int id);
+	List<String> getAllFilescontent();
 }

@@ -32,6 +32,25 @@ public class Editordata implements IEditordata{
         }
         return files;
     }
+    public List<String> getAllFilescontent() {
+        List<String> filescontent = new ArrayList<>();
+        String query = "SELECT d.id AS document_id, " +
+                "GROUP_CONCAT(p.content SEPARATOR ' ') AS document_content " +
+                "FROM Document d " +
+                "JOIN Page p ON d.id = p.document_id " +
+                "GROUP BY d.id " +
+                "ORDER BY d.id";
+        try (PreparedStatement stmt = databaseConnection.getConnection().prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                
+                filescontent.add(rs.getString("document_content"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filescontent;
+    }
 
     public boolean saveToDB(String title, String content) {
         String selectQuery = "SELECT COUNT(*) FROM Document WHERE content_hash = ?";
@@ -239,7 +258,7 @@ public class Editordata implements IEditordata{
 
         return pageData;
     }
-
+    
 
     public void closeConnection() {
         databaseConnection.closeConnection();

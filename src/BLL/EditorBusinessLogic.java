@@ -9,8 +9,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.tartarus.snowball.ext.arabicStemmer;
 
 import DAL.Editordata;
 import DAL.IEditordata;
@@ -23,6 +31,7 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 //    private Editordata data = new Editordata();
 	private IEditordata data;
 	private Farasa farasaSegmenter;
+	
 	public EditorBusinessLogic(IEditordata data) throws FileNotFoundException, ClassNotFoundException, IOException
 	{
 		this.farasaSegmenter=new Farasa();
@@ -31,7 +40,13 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
     public List<Files> getFiles() {
         return data.getFiles();
     }
-
+    public List<String> getfilescontent()
+    {
+    	List<String> documents=new ArrayList<>();
+    	documents=data.getAllFilescontent();
+		return documents;
+    	
+    }
     public boolean saveToDB(String filename, String content) {
         return data.saveToDB(filename, content);
     }
@@ -76,8 +91,29 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
         }
         return contentLine;  // Return the full content if word not found
     }
+    public List<String> splitArabicDocumentsIntoWords(String document) {
+        if (document == null || document.trim().isEmpty()) {
+            throw new IllegalArgumentException("The document cannot be null or empty.");
+        }
+
+        // Clean the text to remove non-Arabic characters (punctuation, numbers, etc.)
+        String cleanedDocument = document.replaceAll("[^\\p{IsArabic}\\s]", "").trim();
+
+        // Split the cleaned document into words based on whitespace
+        String[] wordsArray = cleanedDocument.split("\\s+");
+
+        // Convert the array to a list
+        List<String> words = new ArrayList<>();
+        for (String word : wordsArray) {
+            if (!word.isEmpty()) {
+                words.add(word);
+            }
+        }
+
+        return words;
+    }
     @Override
-    public List<String> segmentArabicText(String text) {
+    public List<String> ArabictoMorphemes(String text) {
         if (text == null || text.trim().isEmpty()) {
             throw new IllegalArgumentException("Input text cannot be null or empty.");
         }
@@ -96,14 +132,14 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
     }
 
     @Override
-    public List<String> segmentWords(String filecontent, String selectedText) {
+    public List<String> userSelectedorFilecontent(String filecontent, String selectedText) {
         String textToSegment;
         if (selectedText != null && !selectedText.trim().isEmpty()) {
             textToSegment = selectedText;
         } else {
         	textToSegment=filecontent;
         }
-        return segmentArabicText(textToSegment);
+        return ArabictoMorphemes(textToSegment);
     }
     
     @Override
@@ -124,6 +160,190 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 
         return wordDetails;
     }
+    @Override
+    public List<String[]> generateStemming(List<String> words) {
+        if (words == null || words.isEmpty()) {
+            throw new IllegalArgumentException("The input list of words cannot be null or empty.");
+        }
+
+        // Create an instance of the Arabic stemmer
+        arabicStemmer stemmer = new arabicStemmer();
+
+        // List to store the original word and its stemmed version
+        List<String[]> stemmedWords = new ArrayList<>();
+
+        // Stem each word in the list
+        for (String word : words) {
+            if (word != null && !word.trim().isEmpty()) {
+                stemmer.setCurrent(word); // Set the current word to the stemmer
+                String stemmedWord = stemmer.stem() ? stemmer.getCurrent() : word; // Stem or retain original
+                stemmedWords.add(new String[]{word, stemmedWord}); // Add both original and stemmed word
+            }
+        }
+
+        return stemmedWords;
+    }
+    public Map<String, Double> calculateTF(List<String> documentWords, List<String> selectedWords) {
+        if (documentWords == null || selectedWords == null) {
+            throw new IllegalArgumentException("Input lists cannot be null.");
+        }
+
+        Map<String, Integer> wordCount = new HashMap<>();
+        int totalWords = documentWords.size();
+
+        if (totalWords == 0) {
+            throw new IllegalArgumentException("The document must contain at least one word.");
+        }
+
+        // Count word occurrences in the document for selected words
+        for (String word : documentWords) {
+            if (selectedWords.contains(word)) { // Only count selected words
+                wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+            }
+        }
+        
+        // Calculate term frequency (TF) for selected words
+        Map<String, Double> tf = new HashMap<>();
+        for (String word : selectedWords) {
+            int count = wordCount.getOrDefault(word, 0);
+            tf.put(word, (double) count / totalWords); // Term Frequency = word count / total words
+        }
+
+        return tf;
+    }
+    public Map<String, Double> calculateCorpusProbability(List<String> corpusWords, List<String> wordsToCheck) {
+        Map<String, Integer> wordCount = new HashMap<>();
+        int totalWords = corpusWords.size();
+
+        // Count frequencies of all words in the corpus
+        for (String word : corpusWords) {
+            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+        }
+
+        // Calculate corpus probability for the given words
+        Map<String, Double> probabilitiess = new HashMap<>();
+        for (String word : wordsToCheck) {
+            int frequency = wordCount.getOrDefault(word, 0);
+            probabilitiess.put(word, (double) frequency / totalWords);
+        }
+
+        return probabilitiess;
+    }
+    public List<String[]> calculatePKL(Map<String, Double> tf, Map<String, Double> corpusProbability) {
+        List<String[]> pklList = new ArrayList<>();
+
+        for (String word : tf.keySet()) {
+            double tfValue = tf.get(word);
+            double corpusProb = corpusProbability.getOrDefault(word, 1e-10); // Avoid division by zero
+
+            // Calculate PKL score
+            double pkl = tfValue * Math.log(tfValue / corpusProb);
+            pkl=Math.abs(pkl);
+
+            // Add the word and its PKL score to the list as an array
+            pklList.add(new String[]{word, String.valueOf(pkl)});
+        }
+
+        return pklList;
+    }
+
+    public Map<String, Double> calculateIDF(List<String> documents, List<String> selectedWords) {
+        Map<String, Integer> docCount = new HashMap<>();
+        int totalDocs = documents.size();
+
+        // Count documents containing each selected word
+        for (String doc : documents) {
+            Set<String> uniqueWords = new HashSet<>(Arrays.asList(doc.split(" ")));
+            for (String word : selectedWords) {
+                if (uniqueWords.contains(word)) {
+                    docCount.put(word, docCount.getOrDefault(word, 0) + 1);
+                }
+            }
+        }
+        
+        // Calculate IDF for each selected word
+        Map<String, Double> idf = new HashMap<>();
+        for (String word : selectedWords) {
+            int count = docCount.getOrDefault(word, 0);
+            double idfValue = (count > 0) ? Math.log((double) totalDocs / count) : 0.0;
+            idf.put(word, idfValue);
+        }
+
+        return idf;
+    }
+    public List<String[]> calculateTFIDF(Map<String, Double> tfScores, Map<String, Double> idfScores) {
+        List<String[]> tfidfScoresList = new ArrayList<>();
+
+        for (String word : tfScores.keySet()) {
+            double tf = tfScores.getOrDefault(word, 0.0);
+            double idf = idfScores.getOrDefault(word, 0.0);
+            double tfidf = tf * idf;
+
+            // Add word, TF, and TF-IDF as an array to the list
+            tfidfScoresList.add(new String[] { word, String.valueOf(tf), String.valueOf(tfidf) });
+        }
+
+        return tfidfScoresList;
+    }
+    public List<String[]> calculatePMI(List<String> segmentedWords) {
+        Map<String, Integer> wordFreq = new HashMap<>();
+        Map<String, Integer> cooccurrence = new HashMap<>();
+        int totalWords = segmentedWords.size();
+        int totalPairs = 0;
+
+        // Step 1: Count word frequencies and co-occurrences
+        for (int i = 0; i < segmentedWords.size(); i++) {
+            // Increment word frequency
+            String word = segmentedWords.get(i);
+            wordFreq.put(word, wordFreq.getOrDefault(word, 0) + 1);
+
+            // Check co-occurrence within a fixed window (e.g., ±1 word)
+            for (int j = i + 1; j < Math.min(i + 2, segmentedWords.size()); j++) {
+                String word2 = segmentedWords.get(j);
+                String pair = word + "," + word2;
+
+                cooccurrence.put(pair, cooccurrence.getOrDefault(pair, 0) + 1);
+                totalPairs++;
+            }
+        }
+
+        // Step 2: Calculate PMI and store in List<String[]>
+        List<String[]> pmiScores = new ArrayList<>();
+        for (String pair : cooccurrence.keySet()) {
+            String[] words = pair.split(",");
+            String word1 = words[0];
+            String word2 = words[1];
+
+            double pWord1 = (double) wordFreq.get(word1) / totalWords;
+            double pWord2 = (double) wordFreq.get(word2) / totalWords;
+            double pWordPair = (double) cooccurrence.get(pair) / totalPairs;
+
+            double pmi = Math.log(pWordPair / (pWord1 * pWord2));
+
+            // Add to the result as a String array with the required format
+            pmiScores.add(new String[]{"(" + word1 + "," + word2 + ")", String.valueOf(pmi)});
+        }
+
+        return pmiScores;
+    }
+
+    @Override
+    public List<String[]> lemmatizeWords(List<String> words) {
+        List<String[]> lemmatizedWords = new ArrayList<>();
+        AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
+        for (String word : words) {
+            try {
+                List<Result> results = analyzer.processToken(word).getAllResults();
+                String lemma = results.isEmpty() ? "Unknown" : results.get(0).getLemma();
+                lemmatizedWords.add(new String[]{word, lemma});
+            } catch (Exception e) {
+                lemmatizedWords.add(new String[]{word, "Error"});
+            }
+        }
+        return lemmatizedWords;
+    }
+
+    @Override
     public ArrayList<String> navigatepages(int name) {
 		// TODO Auto-generated method stub
 		ArrayList<Page>pages=new ArrayList<>();
@@ -182,4 +402,7 @@ public class EditorBusinessLogic implements IEditorBusinessLogic{
 		   
 		   return transliterator.transliterate(arabicText);
 	}
+	
+	
+	
 }
