@@ -39,6 +39,7 @@ public class selectOption extends JFrame {
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
 						new NewFile(filesfrombusiness, transliteration);
+						selectOption.this.dispose();
 					}
         	
         		});

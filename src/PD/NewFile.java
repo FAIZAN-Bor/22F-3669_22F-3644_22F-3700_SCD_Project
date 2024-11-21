@@ -2,8 +2,6 @@ package PD;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +9,8 @@ import BLL.IEditorBusinessLogic;
 
 public class NewFile extends JFrame {
     private JTextArea textArea;
-    private JButton saveButton;
     private IEditorBusinessLogic files;
-    private JButton word_segment;
+
     public NewFile(IEditorBusinessLogic files) {
         this(files, ""); // Use empty content for a new file.
     }
@@ -32,60 +29,56 @@ public class NewFile extends JFrame {
         textArea.setWrapStyleWord(true);
         textArea.setFont(new Font("Arial", Font.PLAIN, 16));
         JScrollPane scrollPane = new JScrollPane(textArea);
-        
-        // Save Button
-        saveButton = new JButton("Save");
-        word_segment=new JButton("Word Segmentation");
-        styleButton(saveButton);
-        styleButton(word_segment);
-        saveButton.addActionListener(e -> saveFile());
-        
-        
-        
-        word_segment.addActionListener(new ActionListener()
-		{
-        	
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				String selectedText=textArea.getSelectedText();
-				List<String> SegmentedWords=new ArrayList<>();
-				SegmentedWords=files.segmentWords(content, selectedText);
-				List<String[]> wordswithPOS=new ArrayList<>();
-				wordswithPOS=files.tagWordsWithPOS(SegmentedWords);
-				new WordPOS(wordswithPOS);
-				
-				//new NewFile(filesfrombusiness, arabic);
-			}
-	
-		});
-        // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBackground(new Color(230, 240, 250));
-        buttonPanel.add(saveButton);
-        buttonPanel.add(word_segment);
+
+        // Add Menu Bar
+        setUpMenuBar(content);
+
         // Add components to Frame
         this.add(scrollPane, BorderLayout.CENTER);
-        this.add(buttonPanel, BorderLayout.SOUTH);
         this.setVisible(true); // Ensure components are initialized before visibility
     }
 
-    private void saveFile() {
-        String filename = JOptionPane.showInputDialog(this, "Enter filename:");
-        if (filename != null && !filename.trim().isEmpty()) {
-            boolean isSaved = files.saveToDB(filename, textArea.getText());
-            String message = isSaved ? "File saved with name: " + filename : "File already exists";
-            JOptionPane.showMessageDialog(this, message, isSaved ? "Success" : "Error", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Filename cannot be empty.", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-    }
+    private void setUpMenuBar(String content) {
+        JMenuBar menuBar = new JMenuBar();
+        
+        // File Menu
+        JMenu fileMenu = new JMenu("File");
 
-    private void styleButton(JButton button) {
-        button.setFont(new Font("Arial", Font.PLAIN, 14));
-        button.setBackground(new Color(60, 179, 113));
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        // Save Option
+        JMenuItem saveMenuItem = new JMenuItem("Save");
+        saveMenuItem.addActionListener(e -> {
+            String filename = JOptionPane.showInputDialog(this, "Enter filename:");
+            if (filename != null && !filename.trim().isEmpty()) {
+                boolean isSaved = files.saveToDB(filename, textArea.getText());
+                String message = isSaved ? "File saved with name: " + filename : "File already exists";
+                JOptionPane.showMessageDialog(this, message, isSaved ? "Success" : "Error", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Filename cannot be empty.", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+        fileMenu.add(saveMenuItem);
+
+        // Word Segmentation Option
+        JMenuItem wordSegmentMenuItem = new JMenuItem("Word Segmentation");
+        wordSegmentMenuItem.addActionListener(e -> {
+        	String selectedText = textArea.getSelectedText();
+            List<String> segmentedWords = files.userSelectedorFilecontent(content, selectedText);
+            List<String[]> wordsWithPOS = files.tagWordsWithPOS(segmentedWords);
+            new WordPOS(wordsWithPOS); // Assuming WordPOS is a JFrame or a dialog to display results
+        });
+        fileMenu.add(wordSegmentMenuItem);
+        JMenuItem Stemming=new JMenuItem("Stemming");
+        Stemming.addActionListener(e -> {
+        	String selectedText = textArea.getSelectedText();
+            List<String> segmentedWords = files.userSelectedorFilecontent(content, selectedText);
+            List<String[]> StemedWords = files.generateStemming(segmentedWords);
+            new WordPOS(StemedWords); // Assuming WordPOS is a JFrame or a dialog to display results
+        });
+        // Add File Menu to Menu Bar
+        fileMenu.add(Stemming);
+        menuBar.add(fileMenu);
+
+        // Set the Menu Bar to the Frame
+        this.setJMenuBar(menuBar);
     }
 }
