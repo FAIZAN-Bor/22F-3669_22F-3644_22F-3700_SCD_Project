@@ -1,59 +1,119 @@
-# Arabic Text Editor
+# ✏️ Arabic Text Editor
 
-## Overview
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-8+-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 
-The Arabic Text Editor is a comprehensive tool designed to facilitate the creation, editing, and analysis of Arabic text. It provides various functionalities such as text segmentation, stemming, lemmatization, and more.
+A comprehensive desktop application for creating, editing, and performing **Natural Language Processing (NLP)** on Arabic text. The editor provides advanced linguistic analysis tools including word segmentation, stemming, lemmatization, POS tagging, TF-IDF scoring, and Arabic-to-English transliteration — all within a user-friendly Java Swing GUI.
 
-## Features
+---
 
-* Create new files and save them to the database
-* Import files from the database or local PC
-* View and navigate through file pages
-* Search for specific words or phrases within files
-* Perform word segmentation, stemming, and lemmatization
-* Calculate TF-IDF, PKL, and PMI scores for text analysis
-* Transliterate Arabic text to English
+## ✨ Features
 
-## Project Structure
+- **📄 File Management** — Create, save, import, and navigate multi-page Arabic text documents stored in MySQL.
+- **🔍 Search** — Search for specific words or phrases within documents.
+- **✂️ Word Segmentation** — Tokenize Arabic text into meaningful segments using Farasa.
+- **📏 Stemming & Lemmatization** — Reduce Arabic words to root forms using Snowball Stemmer and AlKhalil2 Analyzer.
+- **🏷️ POS Tagging** — Part-of-speech tagging for Arabic words.
+- **📊 TF-IDF, PKL & PMI** — Compute statistical text analysis scores for information retrieval and corpus analysis.
+- **🔠 Transliteration** — Convert Arabic text to English transliteration using ICU Transliterator.
 
-* `src/BLL/EditorBusinessLogic.java`: Contains the business logic for the editor, including methods for file operations, text analysis, and more.
-* `src/BLL/IEditorBusinessLogic.java`: Interface for the business logic layer.
-* `src/DAL/Editordata.java`: Data access layer for interacting with the database.
-* `src/DAL/IEditordata.java`: Interface for the data access layer.
-* `src/DAL/SQLDAOEditor.java`: Implementation of the data access object factory.
-* `src/DTO/Files.java`: Data transfer object for files.
-* `src/DTO/Page.java`: Data transfer object for pages.
-* `src/EditorAppMain/ArabicEditorApp.java`: Main class to run the application.
-* `src/PD/EditorGUI.java`: Graphical user interface for the editor.
-* `src/PD/importfile.java`: GUI for importing files from the database.
-* `src/PD/navigatepages.java`: GUI for navigating through file pages.
-* `src/PD/NewFile.java`: GUI for creating and editing new files.
-* `src/PD/searchResults.java`: GUI for displaying search results.
-* `src/PD/selectOption.java`: GUI for selecting options between transliterated and Arabic text.
-* `src/PD/WordPOS.java`: GUI for displaying word segmentation and POS tagging results.
+---
 
-## Configuration
+## 🛠️ Tech Stack
 
-* `src/config.properties`: Configuration file specifying the DAO factory class.
+| Component | Technology |
+|-----------|-----------|
+| **Language** | Java 8+ |
+| **GUI** | Java Swing |
+| **Database** | MySQL |
+| **NLP Libraries** | Farasa (Segmentation), AlKhalil2 (POS/Lemma), Snowball (Stemming) |
+| **Transliteration** | ICU4J Transliterator |
+| **Architecture** | Layered (BLL → DAL → DTO → PD) with DAO Pattern |
 
-## Database
+---
 
-* `src/DAL/DataBaseConnection.java`: Manages the database connection.
-* The database schema includes tables for `Document` and `Page`.
+## 📐 Project Structure
 
-## Dependencies
+```
+Arabic-Text-Editor/
+├── src/
+│   ├── BLL/                        # Business Logic Layer
+│   │   ├── EditorBusinessLogic.java    # Core NLP & file operations
+│   │   └── IEditorBusinessLogic.java   # BLL interface
+│   ├── DAL/                        # Data Access Layer
+│   │   ├── Editordata.java             # Database operations
+│   │   ├── IEditordata.java            # DAL interface
+│   │   ├── SQLDAOEditor.java           # DAO factory
+│   │   └── DataBaseConnection.java     # MySQL connection manager
+│   ├── DTO/                        # Data Transfer Objects
+│   │   ├── Files.java                  # File entity
+│   │   └── Page.java                   # Page entity
+│   ├── EditorAppMain/
+│   │   └── ArabicEditorApp.java    # Application entry point
+│   ├── PD/                         # Presentation Layer (GUI)
+│   │   ├── EditorGUI.java             # Main editor interface
+│   │   ├── NewFile.java               # New file creation dialog
+│   │   ├── importfile.java            # Database file import
+│   │   ├── navigatepages.java         # Page navigation
+│   │   ├── searchResults.java         # Search results display
+│   │   ├── selectOption.java          # Text format selection
+│   │   └── WordPOS.java              # Word analysis display
+│   └── config.properties          # DAO configuration
+├── .gitignore
+├── LICENSE
+└── README.md
+```
 
-* `com.ibm.icu.text.Transliterator`: Used for transliteration.
-* `com.qcri.farasa.segmenter.Farasa`: Used for word segmentation.
-* `net.oujda_nlp_team.AlKhalil2Analyzer`: Used for POS tagging and lemmatization.
-* `org.tartarus.snowball.ext.arabicStemmer`: Used for stemming.
+---
 
-## How to Run
+## 📦 Getting Started
 
-1. Ensure you have a MySQL database set up with the required schema.
-2. Update the database connection details in `src/DAL/DataBaseConnection.java`.
-3. Run the `src/EditorAppMain/ArabicEditorApp.java` to start the application.
+### Prerequisites
+- Java JDK 8 or higher
+- MySQL Server
+- Required JAR libraries: ICU4J, Farasa, AlKhalil2, Snowball
 
-## License
+### Database Setup
 
-This project is licensed under the MIT License.
+1. Create a MySQL database and set up the schema:
+   ```sql
+   CREATE TABLE Document (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       name VARCHAR(255),
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+
+   CREATE TABLE Page (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       document_id INT,
+       content TEXT,
+       page_number INT,
+       FOREIGN KEY (document_id) REFERENCES Document(id)
+   );
+   ```
+
+2. Update the connection details in `src/DAL/DataBaseConnection.java`.
+
+### Running the Application
+
+```bash
+# Compile and run
+javac -cp "lib/*" src/EditorAppMain/ArabicEditorApp.java
+java -cp "lib/*:src" EditorAppMain.ArabicEditorApp
+```
+
+Or open the project in an IDE (IntelliJ IDEA / Eclipse) and run `ArabicEditorApp.java`.
+
+---
+
+## 👥 Contributors
+
+- **Saif Ullah** — [GitHub](https://github.com/saif55045)
+- **Faizan** — [GitHub](https://github.com/FAIZAN-Bor)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
